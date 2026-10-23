@@ -9,10 +9,21 @@ color = ColorSensor(INPUT_1)
 gps = GPSSensor(INPUT_4)
 time.sleep(0.5)
 
+PORIH = 30
+
+def obmezhyty(v):
+    return max(-100, min(100, v))
+
+BAZA = 20
+Kp = 1.2
+
 pochatok = time.time()
-while time.time() - pochatok < 10:
+while time.time() - pochatok < 120 and gps.y < 85:
     v = color.reflected_light_intensity
-    print(v)
-    time.sleep(0.3)
+    e = PORIH - v
+    korekciya = Kp * e
+    tank.on(SpeedPercent(obmezhyty(BAZA - korekciya)),
+            SpeedPercent(obmezhyty(BAZA + korekciya)))
 
 tank.off()
+print("час до кінця траси: %.1f с" % (time.time() - pochatok))
