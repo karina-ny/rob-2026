@@ -1,10 +1,13 @@
 from ev3dev2.motor import MoveTank, OUTPUT_A, OUTPUT_B, SpeedPercent
 from ev3dev2.sensor import INPUT_2
 from ev3dev2.sensor.lego import UltrasonicSensor
+from ev3dev2.sound import Sound
 import time
 
 tank = MoveTank(OUTPUT_A, OUTPUT_B)
 ultra = UltrasonicSensor(INPUT_2)
+sound = Sound()
+
 time.sleep(0.5)
 
 stan = "poshuk"
@@ -15,6 +18,9 @@ def perekhid(novyi):
     print(f"{stan} -> {novyi}")
     stan = novyi
     vkhid = time.time()
+
+    if novyi == "signal":
+        sound.beep()
 
 while stan != "gotovo":
     d = ultra.distance_centimeters
@@ -31,7 +37,7 @@ while stan != "gotovo":
 
     elif stan == "signal":
         tank.off()
-        if time.time() - vkhid > 1:
+        if time.time() - vkhid >= 1:
             perekhid("gotovo")
 
     if time.time() - vkhid > 20:
@@ -39,4 +45,5 @@ while stan != "gotovo":
         tank.off()
         break
 
+tank.off()
 print("місію завершено")
